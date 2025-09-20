@@ -1,0 +1,137 @@
+import { useState } from "react";
+import "./App.css";
+import top from "./assets/top.jpg";
+import fr from "./assets/fr.jpg";
+import sp from "./assets/sp.jpg";
+import jap from "./assets/jap.jpg";
+
+function App() {
+    console.log("🔑 Loaded key:", import.meta.env.VITE_OPENAI_API_KEY);
+  const [text, setText] = useState("");
+  const [language, setLanguage] = useState("fr");
+  const [translated, setTranslated] = useState("");
+  const [showResult, setShowResult] = useState(false);
+
+  const handleTranslate = async () => {
+    try {
+      console.log("➡️ Sending request to OpenAI:", { text, language });
+
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // ⚠️ Replace with your actual key OR use env vars via Vite (see below)
+          Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            { role: "system", content: "You are a helpful translator." },
+            { role: "user", content: `Translate this text into ${language}: "${text}"` },
+          ],
+          temperature: 0,
+          max_tokens: 200,
+        }),
+      });
+
+      console.log("⬅️ Raw response:", response);
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error("❌ OpenAI API returned error:", response.status, errText);
+        setTranslated(`Error ${response.status}: ${errText}`);
+        setShowResult(true);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("⬅️ Parsed JSON:", data);
+
+      const translation = data.choices?.[0]?.message?.content || "⚠️ No translation returned";
+      setTranslated(translation);
+      setShowResult(true);
+    } catch (err) {
+      console.error("❌ Fetch failed:", err);
+      setTranslated("Error: " + err.message);
+      setShowResult(true);
+    }
+  };
+
+  const handleReset = () => {
+    setText("");
+    setTranslated("");
+    setShowResult(false);
+    setLanguage("fr");
+  };
+
+  return (
+    <div className="app-container">
+      <img className="topimg" src={top} alt="top" />
+
+      {!showResult ? (
+        <div className="herobox">
+          <h2>Text To Translate</h2>
+          <textarea
+            placeholder="Text to translate..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+
+          <div className="language-options">
+            <h2>Select Language</h2>
+            <label>
+              <input
+                type="radio"
+                value="fr"
+                checked={language === "fr"}
+                onChange={(e) => setLanguage(e.target.value)}
+              />
+              French
+              <img src={fr} alt="French Flag" className="flag-icon" />
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                value="es"
+                checked={language === "es"}
+                onChange={(e) => setLanguage(e.target.value)}
+              />
+              Spanish
+              <img src={sp} alt="Spanish Flag" className="flag-icon" />
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                value="ja"
+                checked={language === "ja"}
+                onChange={(e) => setLanguage(e.target.value)}
+              />
+              Japanese
+              <img src={jap} alt="Japanese Flag" className="flag-icon" />
+            </label>
+          </div>
+
+          <button className="btn" onClick={handleTranslate}>
+            Translate
+          </button>
+        </div>
+      ) : (
+        <div className="result-box">
+          <h2>Original Text</h2>
+          <textarea value={text} readOnly title="Original text" />
+
+          <h2>Your Translation</h2>
+          <textarea value={translated} readOnly aria-label="Translated text" />
+
+          <button className="btn" onClick={handleReset}>
+            Start Over
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
