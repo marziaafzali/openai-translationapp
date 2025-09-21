@@ -4,17 +4,11 @@ import top from "./assets/top.jpg";
 import fr from "./assets/fr.jpg";
 import sp from "./assets/sp.jpg";
 import jap from "./assets/jap.jpg";
-<<<<<<< HEAD
 import afg from "./assets/afg.jpg"; 
 
 function App() {
   console.log("🔑 Loaded key:", import.meta.env.VITE_OPENAI_API_KEY);
 
-=======
-
-function App() {
-    console.log("🔑 Loaded key:", import.meta.env.VITE_OPENAI_API_KEY);
->>>>>>> 4f1a4cf5cd8dcd05dee40a0a487de0b99e370352
   const [text, setText] = useState("");
   const [language, setLanguage] = useState("fr");
   const [translated, setTranslated] = useState("");
@@ -28,25 +22,16 @@ function App() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-<<<<<<< HEAD
           Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`, // Make sure your key is set
-=======
-          // ⚠️ Replace with your actual key OR use env vars via Vite (see below)
-          Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
->>>>>>> 4f1a4cf5cd8dcd05dee40a0a487de0b99e370352
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
           messages: [
             { role: "system", content: "You are a helpful translator." },
-<<<<<<< HEAD
             {
               role: "user",
               content: `Translate this text into ${language}: "${text}"`,
             },
-=======
-            { role: "user", content: `Translate this text into ${language}: "${text}"` },
->>>>>>> 4f1a4cf5cd8dcd05dee40a0a487de0b99e370352
           ],
           temperature: 0,
           max_tokens: 200,
@@ -66,12 +51,8 @@ function App() {
       const data = await response.json();
       console.log("⬅️ Parsed JSON:", data);
 
-<<<<<<< HEAD
       const translation =
         data.choices?.[0]?.message?.content || "⚠️ No translation returned";
-=======
-      const translation = data.choices?.[0]?.message?.content || "⚠️ No translation returned";
->>>>>>> 4f1a4cf5cd8dcd05dee40a0a487de0b99e370352
       setTranslated(translation);
       setShowResult(true);
     } catch (err) {
@@ -103,10 +84,7 @@ function App() {
 
           <div className="language-options">
             <h2>Select Language</h2>
-<<<<<<< HEAD
 
-=======
->>>>>>> 4f1a4cf5cd8dcd05dee40a0a487de0b99e370352
             <label>
               <input
                 type="radio"
@@ -139,7 +117,6 @@ function App() {
               Japanese
               <img src={jap} alt="Japanese Flag" className="flag-icon" />
             </label>
-<<<<<<< HEAD
 
          
             <label>
@@ -152,8 +129,6 @@ function App() {
               Persian
               <img src={afg} alt="Persian Flag" className="flag-icon" />
             </label>
-=======
->>>>>>> 4f1a4cf5cd8dcd05dee40a0a487de0b99e370352
           </div>
 
           <button className="btn" onClick={handleTranslate}>
